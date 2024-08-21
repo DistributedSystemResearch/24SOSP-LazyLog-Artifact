@@ -3,9 +3,9 @@ import glob
 
 base_dir = "../"
 
-print("#clients,avg tput(ops/sec), avg latency(ns/op), p99(ns/op), p99.9(ns/op),mean append size,mean append time(us/append),mean fetch time(us/fetch),mean gc time(us/gc)")
+print("#clients,avg tput(ops/sec), avg latency(ns/op), p99(ns/op), p99.9(ns/op)")
 for dir_name in os.listdir(base_dir):
-    if dir_name.endswith("4096_2") and os.path.isdir(os.path.join(base_dir, dir_name)):
+    if dir_name.endswith("4096_5") and os.path.isdir(os.path.join(base_dir, dir_name)):
         clients=None
         avg_tput=0
         avg_latency=0
@@ -31,15 +31,4 @@ for dir_name in os.listdir(base_dir):
                         p99 += float(line.split()[1])
                     if "p99.9" in line:
                         p999 += float(line.split()[1])
-        for log_file in glob.glob(os.path.join(base_dir, dir_name, "conssvr*.log")):
-            with open(log_file, 'r') as file:
-                for line in file:
-                    if "append size" in line:
-                        mean_ap_size = float(line.split()[-1])
-                    if "fetch time" in line:
-                        mean_fetch_time = line.split()[-1][:-2]
-                    if "append time" in line:
-                        mean_append_time = line.split()[-1][:-2]
-                    if "GC time" in line:
-                        mean_gc_time = line.split()[-1][:-2]
-        print(f"{clients},{avg_tput},{avg_latency/num_files},{p99/num_files},{p999/num_files},{mean_ap_size},{mean_append_time},{mean_fetch_time},{mean_gc_time}")
+        print(f"{clients},{avg_tput},{avg_latency/num_files},{p99/num_files},{p999/num_files}")

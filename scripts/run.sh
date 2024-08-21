@@ -16,13 +16,13 @@ else
     shard_pri=("node5" "node7" "node9" "node11" "node13")
     shard_bac=("node6" "node8" "node10" "node12" "node14")
 fi
-client_nodes=("node0")
-username="sgbhat3"
+client_nodes=("node0" "node15")
+username="<your_username>"
 
 pe="/users/$username/.ssh/id_rsa"
 data_dir="/data"
 log_dir="$data_dir/logs"
-ll_dir="/proj/rasl-PG0/sgbhat3/LazyLog"
+ll_dir="/proj/rasl-PG0/LL-AE/LazyLog-Artifact"
 
 # arg: ip_addr of node, number of threads
 dur_cmd() {
@@ -274,11 +274,8 @@ setup_data() {
 #   
 
 mode="$1"
-# clients=("1" "2" "4" "6" "8" "10" "12" "16" "18" "20")
-# num_shards=("1" "2" "3" "4" "5")
-# msg_size=("4096")
-clients=("1")
-num_shards=("1")
+clients=("4")
+num_shards=("5")
 msg_size=("4096")
 if [ "$mode" -eq 0 ]; then # run expt   
     for clients in "${clients[@]}";

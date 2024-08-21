@@ -1,6 +1,3 @@
 build/
 .vscode/
 rdma.prop
-
-# read commands
-read-4K/
