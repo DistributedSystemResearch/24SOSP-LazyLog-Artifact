@@ -57,7 +57,7 @@ cd scripts
 cd scripts
 python3 analyze.py
 ```
-* If you wish the change the number of clients and message size, they can be modified in lines 275-280 in the `run.sh` script. 
+* If you wish the change the number of clients and message size, they can be modified in [these lines](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/465c9614e221845f77f3d2f425f47a48f21090b3/scripts/run.sh#L276-L279) in the `run.sh` script. 
 
 
 ## Supported Platforms
