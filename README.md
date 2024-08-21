@@ -43,9 +43,21 @@ git clone https://github.com/dassl-uiuc/LazyLog-Artifact.git --recursive
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ```
-
-
-
+## Running a simple append-only benchmark on 
+* Login into `node0` in the cluster we provide. The eRPC and LazyLog directories will be in the shared NFS folder at `/proj/rasl-PG0/LL-AE`. 
+* Modify your username and passless private key path in `scripts/run.sh`. 
+* Run the following 
+```
+cd scripts
+./run.sh 2
+```
+* The script setups up the various Erwin-blackbox components (such as the shard servers and sequencing layer servers) and starts an append-only benchmark on Erwin-blackbox with 5 backend shards, 4 client threads spread over 2 client nodes (`node0` and `node15`) and 4K sized messages. The benchmark should run for approximately 2 minutes and terminate. On termination, in the root directory of LazyLog, a folder with the name `logs_<num_client>_<message_size>_<num_shards>` is created which contains the runtime log file with the latency and throughput metrics. 
+* We provide an analysis script to display the standard metrics in a human readable form which can be invoked as 
+```
+cd scripts
+python3 analyze.py
+```
+* If you wish the change the number of clients and message size, they can be modified in lines 275-280 in the `run.sh` script. 
 
 
 
