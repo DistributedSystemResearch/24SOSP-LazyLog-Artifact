@@ -60,6 +60,11 @@ python3 analyze.py
 * If you wish the change the number of clients and message size, they can be modified in lines 275-280 in the `run.sh` script. 
 
 
+## Supported Platforms
+LazyLog has been tested on the following platforms
+* OS: Ubuntu 22.04 LTS
+* NIC: Mellanox MT27710 Family ConnectX-4 Lx (25Gb RoCE)
+* RDMA Driver: MLNX_OFED-23.10-0.5.5.0
 
 
 
