@@ -1,0 +1,4 @@
+shard.server_uri=10.10.1.24:31860
+shard.backup_uri=10.10.1.25:31860
+shard.id=9
+threadcount=18
