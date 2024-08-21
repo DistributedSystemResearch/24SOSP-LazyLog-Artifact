@@ -3,7 +3,7 @@ This repo is the artifact for: <to be added>
 
 ## Setup
 For ease of setup, we request that the source code for LazyLog and eRPC and their binaries be hosted on a network-file system so that all the nodes can share these files. 
-Some of the installation steps need to be done on all the nodes (16 is sufficient for Erwin-blackbox) and some such as the compilation need only be done on one node. The scripts expect that the data directory on all the nodes to store the run-time logs as well as the storage for the shared-log be mounted at `/data`. **For the benefit of the reviewers, we will provide a cluster which already has all the following setup steps completed**. 
+Some of the installation steps need to be done on all the nodes (16 is sufficient for Erwin-blackbox) and some such as the compilation need only be done on one node. The scripts expect that the data directory on all the nodes to store the run-time logs as well as the storage for the shared-log be mounted at `/data` on each node. **For the benefit of the reviewers, we will provide a cluster which already has all the following setup steps completed**. 
 
 ### Installation to be done on all the nodes
 * Install RDMA drivers
