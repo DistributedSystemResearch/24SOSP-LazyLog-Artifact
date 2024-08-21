@@ -61,7 +61,7 @@ python3 analyze.py
 
 
 ## Supported Platforms
-LazyLog has been tested on the following platforms
+The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms
 * OS: Ubuntu 22.04 LTS
 * NIC: Mellanox MT27710 Family ConnectX-4 Lx (25Gb RoCE)
 * RDMA Driver: MLNX_OFED-23.10-0.5.5.0
