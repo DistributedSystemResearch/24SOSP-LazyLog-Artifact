@@ -13,8 +13,8 @@ elif [ "$threeway" = "true" ]; then
     shard_bac=("node6" "node8" "node10" "node12" "node14")
     shard_bac1=("node14" "node12" "node8" "node10" "node6")
 else 
-    shard_pri=("node5")
-    shard_bac=("node6")
+    shard_pri=("node5" "node7" "node9" "node11" "node13")
+    shard_bac=("node6" "node8" "node10" "node12" "node14")
 fi
 client_nodes=("node0")
 username="sgbhat3"
