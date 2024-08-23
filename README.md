@@ -47,10 +47,14 @@ cmake --build build -j
 * Modify your username and passless private key path in `scripts/run.sh`. 
 * Run the following 
 ```
+# Create a logs directory
+mkdir -p logs
+
+# Run the script
 cd scripts
 ./run.sh 2
 ```
-* The script setups up the various Erwin-blackbox components (such as the shard servers and sequencing layer servers) and starts an append-only benchmark on Erwin-blackbox with 5 backend shards, 4 client threads spread over 2 client nodes (`node0` and `node15`) and 4K sized messages. The benchmark should run for approximately 2 minutes and terminate. On termination, in the root directory of LazyLog, a folder with the name `logs_<num_client>_<message_size>_<num_shards>` is created which contains the runtime log file with the latency and throughput metrics. 
+* The script setups up the various Erwin-blackbox components (such as the shard servers and sequencing layer servers) and starts an append-only experiment on Erwin-blackbox with 1 backend shard, 1 client thread on `node0` and 4K sized messages. The benchmark should run for approximately 2 minutes and terminate. On termination, in the root directory of LazyLog, a folder with the name `logs_<num_client>_<message_size>_<num_shards>` is created which contains the runtime log file with the latency and throughput metrics. 
 * We provide an analysis script to display the standard metrics in a human readable form which can be invoked as 
 ```
 cd scripts

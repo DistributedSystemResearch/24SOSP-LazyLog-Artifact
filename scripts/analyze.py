@@ -5,7 +5,7 @@ base_dir = "../"
 
 print("#clients,avg tput(ops/sec), avg latency(ns/op), p99(ns/op), p99.9(ns/op)")
 for dir_name in os.listdir(base_dir):
-    if dir_name.endswith("4096_5") and os.path.isdir(os.path.join(base_dir, dir_name)):
+    if dir_name.endswith("4096_1") and os.path.isdir(os.path.join(base_dir, dir_name)):
         clients=None
         avg_tput=0
         avg_latency=0

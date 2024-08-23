@@ -13,10 +13,10 @@ elif [ "$threeway" = "true" ]; then
     shard_bac=("node6" "node8" "node10" "node12" "node14")
     shard_bac1=("node14" "node12" "node8" "node10" "node6")
 else 
-    shard_pri=("node5" "node7" "node9" "node11" "node13")
-    shard_bac=("node6" "node8" "node10" "node12" "node14")
+    shard_pri=("node5")
+    shard_bac=("node6")
 fi
-client_nodes=("node0" "node15")
+client_nodes=("node0")
 username="<your_username>"
 
 pe="/users/$username/.ssh/id_rsa"
@@ -274,8 +274,8 @@ setup_data() {
 #   
 
 mode="$1"
-clients=("4")
-num_shards=("5")
+clients=("1")
+num_shards=("1")
 msg_size=("4096")
 if [ "$mode" -eq 0 ]; then # run expt   
     for clients in "${clients[@]}";
