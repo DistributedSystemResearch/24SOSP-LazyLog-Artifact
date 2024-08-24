@@ -44,6 +44,9 @@ cmake --build build -j
 ```
 ## Running a simple append-only benchmark on the provided cluster
 * Login into `node0` in the cluster we provide. The eRPC and LazyLog directories will be in the shared NFS folder at `/proj/rasl-PG0/LL-AE`. 
+  ```
+  ssh -o StrictHostKeyChecking=no -i ${PATH_TO_KEY} luoxh@${HOST_ADDR_NODE0}
+  ```
 * Modify your username and passless private key path in `scripts/run.sh`. 
 * Run the following 
 ```

@@ -17,12 +17,14 @@ else
     shard_bac=("node6")
 fi
 client_nodes=("node0")
-username="<your_username>"
+username="luoxh"
+usergroup="rasl-PG0"
 
-pe="/users/$username/.ssh/id_rsa"
+pe="/users/$username/.ssh/id_rsa_ae"
 data_dir="/data"
 log_dir="$data_dir/logs"
 ll_dir="/proj/rasl-PG0/LL-AE/LazyLog-Artifact"
+script_dir=$(dirname "$0")
 
 # arg: ip_addr of node, number of threads
 dur_cmd() {
@@ -167,11 +169,11 @@ run_append_bench() {
 kill_shard_svrs() {
     for svr in "${shard_pri[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo bash -s shardsvr" < kill_process.sh &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo bash -s shardsvr" < $script_dir/kill_process.sh &
     done
     for svr in "${shard_bac[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo bash -s shardsvr" < kill_process.sh &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo bash -s shardsvr" < $script_dir/kill_process.sh &
     done 
     wait
 }
@@ -179,7 +181,7 @@ kill_shard_svrs() {
 kill_dur_svrs() {
     for svr in "${dur_svrs[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo bash -s dursvr" < kill_process.sh &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo bash -s dursvr" < $script_dir/kill_process.sh &
     done 
     wait
 }
@@ -191,7 +193,7 @@ kill_cons_svr() {
 kill_clients() {
     for client in "${client_nodes[@]}"; 
     do     
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "sudo bash -s append_bench" < kill_process.sh &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "sudo bash -s append_bench" < $script_dir/kill_process.sh &
     done 
     wait
 }
@@ -208,6 +210,8 @@ drop_shard_caches() {
 }
 
 collect_logs() {
+    mkdir -p $ll_dir/logs
+
     for svr in "${shard_pri[@]}"; 
     do
         scp -o StrictHostKeyChecking=no -i $pe -r "$username@$svr:$log_dir/*" "$ll_dir/logs/"
@@ -252,20 +256,20 @@ setup_data() {
     clear_nodes
     for svr in "${shard_pri[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
     for svr in "${shard_bac[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
-    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "mkdir $log_dir"
+    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     for svr in "${dur_svrs[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
     for client in "${client_nodes[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
 }
 
@@ -296,7 +300,7 @@ if [ "$mode" -eq 0 ]; then # run expt
         kill_dur_svrs
         kill_cons_svr
         collect_logs
-        mkdir ${ll_dir}/logs_$clients
+        mkdir -p ${ll_dir}/logs_$clients
         mv $ll_dir/logs/* ${ll_dir}/logs_$clients
     done 
 elif [ "$mode" -eq 1 ]; then # load 10 million keys
@@ -341,7 +345,7 @@ elif [ "$mode" -eq 2 ]; then
                 kill_shard_svrs
                 kill_dur_svrs
                 collect_logs
-                mkdir ${ll_dir}/logs_${c}_${size}_${shard}
+                mkdir -p ${ll_dir}/logs_${c}_${size}_${shard}
                 mv $ll_dir/logs/* ${ll_dir}/logs_${c}_${size}_${shard}
             done 
         done
