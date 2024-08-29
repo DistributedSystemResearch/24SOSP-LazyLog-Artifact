@@ -43,6 +43,28 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ```
 ## Running a simple append-only benchmark on the provided cluster
+
+### Node list
+| node   | address                |
+|--------|------------------------|
+| node0  | hp133.utah.cloudlab.us |
+| node1  | hp151.utah.cloudlab.us |
+| node2  | hp143.utah.cloudlab.us |
+| node3  | hp140.utah.cloudlab.us |
+| node4  | hp136.utah.cloudlab.us |
+| node5  | hp123.utah.cloudlab.us |
+| node6  | hp125.utah.cloudlab.us |
+| node7  | hp142.utah.cloudlab.us |
+| node8  | hp134.utah.cloudlab.us |
+| node9  | hp157.utah.cloudlab.us |
+| node10 | hp138.utah.cloudlab.us |
+| node11 | hp154.utah.cloudlab.us |
+| node12 | hp132.utah.cloudlab.us |
+| node13 | hp155.utah.cloudlab.us |
+| node14 | hp127.utah.cloudlab.us |
+| node15 | hp158.utah.cloudlab.us |
+
+### Steps
 * Login into `node0` in the cluster we provide. The eRPC and LazyLog directories will be in the shared NFS folder at `/proj/rasl-PG0/LL-AE`. 
   ```
   ssh -o StrictHostKeyChecking=no -i ${PATH_TO_KEY} luoxh@${HOST_ADDR_NODE0}
