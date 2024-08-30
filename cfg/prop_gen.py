@@ -15,7 +15,8 @@ def gen_client_prop(client_ip: str, dl_ips: 'list[str]', configs: dict):
             server_uri=','.join([d+':31850' for d in dl_ips]),
             primary_uri=dl_ips[0]+':31850',
             client_uri=client_ip+':31851',
-            msg_size=configs['dur_log']['msg_size']
+            msg_size=configs['dur_log']['msg_size'],
+            durlog_th=configs['dur_log']['thread']
         ))
         f.writelines(lines)
 
@@ -64,12 +65,13 @@ def gen_backend_prop(shard_ips: 'list[str]', shard_rep: int, n_shard: int, cl_ip
             msg_size=configs['backend']['msg_size'],
             stripe_unit=configs['backend']['stripe_unit'],
             shard_num=n_shard,
-            folder=configs['backend']['path']
+            folder=configs['backend']['path'],
+            shard_th=configs['backend']['thread']
         ))
         f.writelines(lines)
 
 
-def gen_shard_prop(shard_ips: 'list[str]', shard_rep: int, n_shard: int):
+def gen_shard_prop(shard_ips: 'list[str]', shard_rep: int, n_shard: int, th: int):
     with open(os.path.join(config_path, 'shard.prop.template'), 'r') as t:
         tmpl = Template(t.read())
     
@@ -80,7 +82,8 @@ def gen_shard_prop(shard_ips: 'list[str]', shard_rep: int, n_shard: int):
             lines.append(tmpl.substitute(
                 server_uri=shard_ips[i]+':31860',
                 backup_uri=shard_ips[i+1] + ':31860' if shard_rep > 1 else '',
-                shard_id=int(i / shard_rep)
+                shard_id=int(i / shard_rep),
+                shard_th=th
             ))
             f.writelines(lines)
         id += 1
@@ -103,7 +106,7 @@ def gen_prop(n_shard: int):
         gen_durlog_prop(dur_server_ips, cons_server_ip, configs)
         gen_conslog_prop(cons_server_ip, configs)
         gen_backend_prop(shard_ips, shard_rep, n_shard, cons_server_ip, configs)
-        gen_shard_prop(shard_ips, shard_rep, n_shard)
+        gen_shard_prop(shard_ips, shard_rep, n_shard, configs['backend']['thread'])
 
 
 if __name__ == '__main__':

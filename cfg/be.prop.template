@@ -4,3 +4,4 @@ shard.msg_size=${msg_size}
 shard.stripe_unit_size=${stripe_unit}
 shard.num=${shard_num}
 shard.folder_path=${folder}
+shard.threadcount=${shard_th}
