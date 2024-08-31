@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "../../utils/properties.h"
+#include "../../utils/ratelimit.h"
 #include "../lazylog_cli.h"
 
 using namespace lazylog;
@@ -12,13 +13,18 @@ using namespace std::chrono;
 
 std::unordered_map<int, std::pair<uint64_t, uint64_t>> num_requests_and_durations;
 
-void writer_thread(int thd_id, hdr_histogram* histogram, const Properties& prop) {
+void writer_thread(int thd_id, hdr_histogram* histogram, const Properties& prop, int64_t ops_limit) {
     std::cout << "[append_bench]: starting thread " << thd_id << " ..." << std::endl;
+
+    RateLimiter *rlim = nullptr;
+    if (ops_limit > 0) {
+        rlim = new RateLimiter(ops_limit, ops_limit);
+    }
 
     LazyLogClient cli;
     uint64_t runtime_secs = std::stoll(prop.GetProperty("runtime_secs", "180"));
     uint64_t request_size = std::stoll(prop.GetProperty("request_size_bytes", "1024"));
-    uint64_t node_id = std::stoll(prop.GetProperty("node_id"));
+    uint64_t node_id = std::stoll(prop.GetProperty("node_id", "0"));
     int threads = std::stoll(prop.GetProperty("threadcount", "1"));
 
     num_requests_and_durations.insert({thd_id, {0, 0}});
@@ -33,6 +39,8 @@ void writer_thread(int thd_id, hdr_histogram* histogram, const Properties& prop)
     std::string data(request_size, 'A');
     auto begin = high_resolution_clock::now();
     while (true) {
+        if (rlim) rlim->Consume(1);
+    
         auto start = high_resolution_clock::now();
         auto ret = cli.AppendEntryAll(data);
         hdr_record_value_atomic(histogram, duration_cast<nanoseconds>(high_resolution_clock::now() - start).count());
@@ -63,13 +71,15 @@ int main(int argc, const char* argv[]) {
     uint64_t runtime_secs = std::stoll(prop.GetProperty("runtime_secs", "180"));
     uint64_t client_id = std::stoll(prop.GetProperty("node_id", "0"));
     int threads = std::stoll(prop.GetProperty("threadcount", "1"));
+    const int64_t ops_limit = std::stoi(prop.GetProperty("limit.ops", "0"));
+    int64_t per_thread_ops = ops_limit / threads;
 
     std::cout << "[append_bench]: running " << threads << " threads, each executing for " << runtime_secs
               << " seconds..." << std::endl;
 
     std::vector<std::thread> writer_threads;
     for (int i = 0; i < threads; i++) {
-        writer_threads.emplace_back(std::move(std::thread(writer_thread, i, histogram, std::ref(prop))));
+        writer_threads.emplace_back(std::move(std::thread(writer_thread, i, histogram, std::ref(prop), per_thread_ops)));
     }
     for (auto& t : writer_threads) {
         t.join();
