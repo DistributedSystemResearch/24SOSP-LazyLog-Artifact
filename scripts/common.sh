@@ -9,8 +9,8 @@ elif [ "$threeway" = "true" ]; then
     shard_bac=("node6" "node8" "node10" "node12" "node14")
     shard_bac1=("node14" "node12" "node8" "node10" "node6")
 else 
-    shard_pri=("node5")
-    shard_bac=("node6")
+    shard_pri=("node5" "node7" "node9" "node11" "node13")
+    shard_bac=("node6" "node8" "node10" "node12" "node14")
 fi
 client_nodes=("node0")
 username="luoxh"
@@ -157,7 +157,7 @@ run_append_bench() {
         else
             num_jobs_for_client=$low_num
         fi
-        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "sh -c \"cd $ll_dir && nohup $(append_cmd $1 $num_jobs_for_client $3 0) -p dur_log.client_uri=$(get_ip $client):31851 -p node_id=$i > $log_dir/append_bench_$client.log 2>&1\"" &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "sh -c \"cd $ll_dir && nohup $(append_cmd $1 $num_jobs_for_client $3 $4) -p dur_log.client_uri=$(get_ip $client):31851 -p node_id=$i > $log_dir/append_bench_$client.log 2>&1\"" &
     done
     wait
 }

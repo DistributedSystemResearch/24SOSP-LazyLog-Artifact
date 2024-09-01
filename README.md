@@ -64,8 +64,8 @@ cmake --build build -j
 | node14 | hp127.utah.cloudlab.us |
 | node15 | hp158.utah.cloudlab.us |
 
-### Steps
-* Login into `node0` in the cluster we provide. The eRPC and LazyLog directories will be in the shared NFS folder at `/proj/rasl-PG0/LL-AE`. 
+### Steps for Functional
+* Login into `node0` in the cluster we provide (unless otherwise stated, all experiment scripts are run from node0). The eRPC and LazyLog directories will be in the shared NFS folder at `/proj/rasl-PG0/LL-AE`. 
   ```
   ssh -o StrictHostKeyChecking=no -i ${PATH_TO_KEY} luoxh@${HOST_ADDR_NODE0}
   ```
@@ -87,6 +87,15 @@ python3 analyze.py
 ```
 * If you wish the change the number of clients and message size, they can be modified in [these lines](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/465c9614e221845f77f3d2f425f47a48f21090b3/scripts/run.sh#L276-L279) in the `run.sh` script. 
 
+### Steps for Results
+
+#### Append Latency (fig 6&7)
+To get latency for Erwin, run:
+```
+cd scripts
+./fig67.sh
+python3 analyze.py
+```
 
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms

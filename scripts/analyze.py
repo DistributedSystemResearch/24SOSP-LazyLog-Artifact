@@ -3,9 +3,9 @@ import glob
 
 base_dir = "../"
 
-print("#clients,avg tput(ops/sec), avg latency(ns/op), p99(ns/op), p99.9(ns/op)")
+print("#clients, avg tput(ops/sec), avg latency(us/op), p99(us/op), p99.9(us/op)")
 for dir_name in os.listdir(base_dir):
-    if dir_name.endswith("4096_1") and os.path.isdir(os.path.join(base_dir, dir_name)):
+    if dir_name.startswith("logs") and os.path.isdir(os.path.join(base_dir, dir_name)):
         clients=None
         avg_tput=0
         avg_latency=0
@@ -22,13 +22,13 @@ for dir_name in os.listdir(base_dir):
                     if "ops/sec" in line:
                         avg_tput += float(line.split()[-2])
                     if "#[Mean" in line:
-                        avg_latency += float(line.split()[2].split(',')[0])
+                        avg_latency += float(line.split()[2].split(',')[0]) / 1000
                     if "p50:" in line:
-                        p50 += float(line.split()[1])
+                        p50 += float(line.split()[1]) / 1000
                     if "p95:" in line:
-                        p95 += float(line.split()[1])
+                        p95 += float(line.split()[1]) / 1000
                     if "p99:" in line:
-                        p99 += float(line.split()[1])
+                        p99 += float(line.split()[1]) / 1000
                     if "p99.9" in line:
-                        p999 += float(line.split()[1])
-        print(f"{clients},{avg_tput},{avg_latency/num_files},{p99/num_files},{p999/num_files}")
+                        p999 += float(line.split()[1]) / 1000
+        print(f"{clients:<8}, {avg_tput:<17}, {avg_latency/num_files:<18}, {p99/num_files:<10}, {p999/num_files:<12}")

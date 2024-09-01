@@ -22,11 +22,11 @@ dur_log:
   thread: 18
 cons_log:
   mr_size: 512
-  max_fetch_size: 2097152
+  max_fetch_size: 4194304
   pipeline: true
 backend:
   msg_size: 6291456
-  stripe_unit: 4000
+  stripe_unit: 1000
   path: "/data"
   rep: 2
   thread: 18
