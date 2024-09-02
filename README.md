@@ -96,6 +96,15 @@ cd scripts
 ./fig67.sh
 python3 analyze.py
 ```
+To get latency for Scalog, run:
+```
+cd scalog-benchmarking/lazylog-benchmarking/scripts
+sudo rm -rf ../results
+./run_script_on_all.sh setup_disk.sh
+./run.sh 0
+python3 analyze.py
+```
+
 
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms

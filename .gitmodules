@@ -10,3 +10,6 @@
 [submodule "cppkafka"]
 	path = cppkafka
 	url = https://github.com/mfontanini/cppkafka.git
+[submodule "scalog-benchmarking"]
+	path = scalog-benchmarking
+	url = git@github.com:dassl-uiuc/scalog-benchmarking.git
