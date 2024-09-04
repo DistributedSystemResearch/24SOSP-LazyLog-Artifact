@@ -208,6 +208,34 @@ void DurabilityLogERPCCli::pollForRpcComplete() {
 
 void DurabilityLogERPCCli::notifyRpcComplete() { complete_ = true; }
 
+#ifdef CORFU
+uint64_t DurabilityLogERPCCli::getGSN() {
+    // size_t len = Serializer(e, req_.buf_);
+
+    rpc_->resize_msg_buffer(&req_, 0);
+    rpc_->enqueue_request(session_num_, GET_GSN, &req_, &resp_, rpc_cont_func, this);
+
+    pollForRpcComplete();
+    if (resp_.get_data_size() < sizeof(uint64_t)) return UINT64_MAX;
+
+    return *reinterpret_cast<uint64_t *>(resp_.buf_);
+}
+
+uint64_t DurabilityLogERPCCli::getGSNBatch(uint64_t batchSize) {
+    rpc_->resize_msg_buffer(&req_, sizeof(uint64_t));
+
+    *reinterpret_cast<uint64_t *>(req_.buf_) = batchSize;
+
+    rpc_->enqueue_request(session_num_, GET_GSN_BATCH, &req_, &resp_, rpc_cont_func, this);
+
+    pollForRpcComplete();
+
+    if (resp_.get_data_size() < sizeof(uint64_t)) return UINT64_MAX;
+
+    return *reinterpret_cast<uint64_t *>(resp_.buf_);
+}
+#endif
+
 const bool registered = RPCFactory::RegisterRPC("durlog_erpc_cli", []() {
     return std::dynamic_pointer_cast<RPCTransport>(std::make_shared<DurabilityLogERPCCli>());
 });

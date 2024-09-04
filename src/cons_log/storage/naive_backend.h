@@ -38,6 +38,10 @@ class NaiveReadBackend : public StorageBackend {
     void FinalizeBackend() override;
     bool ReadEntry(const uint64_t idx, LogEntry &e) override;
 
+#ifdef CORFU
+    void InitializeBackendBackup(const Properties &p, int idx = 1);
+#endif
+
    protected:
     bool allRPCCompleted(std::vector<RPCToken> &tokens);
     void waitForAllShards(std::vector<RPCToken> &tokens);

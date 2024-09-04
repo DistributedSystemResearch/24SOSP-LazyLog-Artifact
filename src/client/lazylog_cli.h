@@ -12,6 +12,10 @@
 #include "../utils/properties.h"
 #include "../utils/sequencer.h"
 
+#ifdef CORFU
+#include "../rpc/erpc_transport.h"
+#endif
+
 namespace lazylog {
 
 /**
@@ -49,6 +53,10 @@ class LazyLogClient {
 
     void doProgress();
 
+#ifdef CORFU
+    int AppendEntryCorfu(const std::string &data);
+#endif
+
    protected:
     LogEntry constructLogEntry(const std::string &data);
     bool quorumCompleted(std::shared_ptr<RPCToken> pri_token, std::vector<std::shared_ptr<RPCToken> > &tokens);
@@ -58,6 +66,10 @@ class LazyLogClient {
     // std::shared_ptr<ConsensusLogCli> cons_cli_;  // for indirect read, currently not used
     std::unordered_map<std::string, std::shared_ptr<DurabilityLogCli> > dur_clis_;
     std::shared_ptr<NaiveReadBackend> be_rd_cli_;  // for direct read
+#ifdef CORFU
+    std::shared_ptr<NaiveReadBackend> be_rd_cli_backup_;    // for corfu write
+    std::shared_ptr<NaiveReadBackend> be_rd_cli_backup_2_;  // for corfu write
+#endif
 
     std::string dl_primary_;
 

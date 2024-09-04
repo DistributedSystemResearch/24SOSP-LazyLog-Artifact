@@ -34,15 +34,23 @@ void LazyLogClient::Initialize(const Properties &p) {
         dur_clis_[s]->InitializeConn(p, s, nullptr);
     }
 
-    // bool is_user_provided_id = p.ContainsKey("dur_log.client_id");
-    // uint64_t thread_count = std::stoull(p.GetProperty("shard.threadcount", "1"));
-    // if (is_user_provided_id) {
-    //     uint64_t id = std::stoull(p.GetProperty("dur_log.client_id"));
-    //     be_rd_cli_ = std::make_shared<NaiveReadBackend>(id % thread_count);
-    // } else {
-    //     be_rd_cli_ = std::make_shared<NaiveReadBackend>(global_th_id_.fetch_add(1) % thread_count);
-    // }
-    // be_rd_cli_->InitializeBackend(p);
+    bool is_user_provided_id = p.ContainsKey("dur_log.client_id");
+    uint64_t thread_count = std::stoull(p.GetProperty("shard.threadcount", "1"));
+    if (is_user_provided_id) {
+        uint64_t id = std::stoull(p.GetProperty("dur_log.client_id"));
+        be_rd_cli_ = std::make_shared<NaiveReadBackend>(id % thread_count);
+    } else {
+        be_rd_cli_ = std::make_shared<NaiveReadBackend>(global_th_id_.fetch_add(1) % thread_count);
+    }
+    be_rd_cli_->InitializeBackend(p);
+
+#ifdef CORFU
+    be_rd_cli_backup_ = std::make_shared<NaiveReadBackend>(global_th_id_.fetch_add(1) % thread_count);
+    be_rd_cli_backup_->InitializeBackendBackup(p);
+
+    be_rd_cli_backup_2_ = std::make_shared<NaiveReadBackend>(global_th_id_.fetch_add(1) % thread_count);
+    be_rd_cli_backup_2_->InitializeBackendBackup(p, 2);
+#endif
 
     // int f = (dl_servers.size() - 1) / 2;
     // maj_threshold_ = f + (f + 1) / 2 + 1;  // super majority: f + ceil(f/2) + 1
@@ -102,6 +110,18 @@ std::pair<uint64_t, uint64_t> LazyLogClient::AppendEntryQuorum(const std::string
 }
 
 std::pair<uint64_t, uint64_t> LazyLogClient::AppendEntryAll(const std::string &data) {
+#ifdef CORFU
+    std::vector<LogEntry> es;
+    LogEntry e = constructLogEntry(data);
+    uint64_t gsn = dur_clis_[dl_primary_]->getGSN();
+    e.log_idx = gsn;
+    es.push_back(e);
+    be_rd_cli_->AppendBatch(es);
+    be_rd_cli_backup_->AppendBatch(es);
+    be_rd_cli_backup_2_->AppendBatch(es);
+
+    return std::make_pair(e.client_id, e.client_seq);
+#else
     LogEntry e = constructLogEntry(data);
     std::vector<std::shared_ptr<RPCToken>> tokens;
     for (auto &dc : dur_clis_) {
@@ -119,6 +139,7 @@ std::pair<uint64_t, uint64_t> LazyLogClient::AppendEntryAll(const std::string &d
     } while (!allCompleted(tokens));
 
     return std::make_pair(e.client_id, e.client_seq);
+#endif
 }
 
 uint64_t LazyLogClient::OrderEntry(const std::string &data) {
@@ -150,9 +171,7 @@ int LazyLogClient::SpecReadEntry(const uint64_t idx, std::string &data) {
 }
 
 void LazyLogClient::doProgress() {
-    for (auto &dc : dur_clis_) {
-        dc.second->RunERPCOnce();
-    }
+    ERPCTransport::RunERPCOnce();
 }
 
 std::tuple<uint64_t, uint64_t, uint16_t> LazyLogClient::GetTail() { return dur_clis_[dl_primary_]->GetNumDurEntry(); }

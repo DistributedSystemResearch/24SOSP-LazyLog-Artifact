@@ -33,6 +33,10 @@ void ERPCDurLogTransport::Initialize(const Properties &p) {
     nexus_->register_req_func(FETCH_UNORDERED_ENTRIES, FetchUnorderedEntriesHandler);
     nexus_->register_req_func(DEL_ORDERED_ENTRIES, DeleteOrderedEntriesHandler);
     nexus_->register_req_func(SPEC_READ, SpecReadHandler);
+#ifdef CORFU
+    nexus_->register_req_func(GET_GSN, GetGSNHandler);
+    nexus_->register_req_func(GET_GSN_BATCH, GetGSNBatchHandler);
+#endif
 
     const int n_th = std::stoi(p.GetProperty("threadcount", "1"));
 
@@ -134,6 +138,31 @@ void ERPCDurLogTransport::SpecReadHandler(erpc::ReqHandle *req_handle, void *con
 
     rpc_->enqueue_response(req_handle, &resp);
 }
+
+#ifdef CORFU
+void ERPCDurLogTransport::GetGSNHandler(erpc::ReqHandle *req_handle, void *context) {
+    // only on primary
+    auto *req = req_handle->get_req_msgbuf();
+    auto &resp = req_handle->pre_resp_msgbuf_;
+
+    *reinterpret_cast<uint64_t *>(resp.buf_) = dur_log_->GetGSN();
+
+    rpc_->resize_msg_buffer(&resp, sizeof(uint64_t));
+    rpc_->enqueue_response(req_handle, &resp);
+}
+
+void ERPCDurLogTransport::GetGSNBatchHandler(erpc::ReqHandle *req_handle, void *context) {
+    // only on primary
+    auto *req = req_handle->get_req_msgbuf();
+    auto &resp = req_handle->pre_resp_msgbuf_;
+    const uint64_t batchSize = *reinterpret_cast<uint64_t *>(req->buf_);
+
+    *reinterpret_cast<uint64_t *>(resp.buf_) = dur_log_->GetGSN(batchSize);
+
+    rpc_->resize_msg_buffer(&resp, sizeof(uint64_t));
+    rpc_->enqueue_response(req_handle, &resp);
+}
+#endif
 
 void ERPCDurLogTransport::cl_server_func(const Properties *p) {
     const uint8_t phy_port = std::stoi(p->GetProperty("erpc.phy_port", "0"));

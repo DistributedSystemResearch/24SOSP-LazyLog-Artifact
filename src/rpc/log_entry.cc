@@ -96,10 +96,12 @@ size_t MultiSerializer(const std::vector<LogEntry> &es, uint8_t *buf) {
     return offset;
 }
 
-size_t MultiSerializer(const std::vector<LogEntry> &es, uint64_t from, uint32_t num, uint8_t *buf) {
+size_t MultiSerializer(const std::vector<LogEntry> &es, uint64_t from, uint32_t num, uint8_t *buf, bool wo_num) {
     size_t offset = 0;
-    *reinterpret_cast<uint32_t *>(buf) = num;
-    offset += sizeof(num);
+    if (!wo_num) {
+        *reinterpret_cast<uint32_t *>(buf) = num;
+        offset += sizeof(num);
+    }
 
     for (uint32_t i = 0; i < num; ++i) {
         offset += Serializer(es[from + i], buf + offset);

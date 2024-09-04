@@ -61,8 +61,9 @@ size_t MultiSerializer(const std::vector<LogEntry> &es, uint8_t *buf);
  * Serialize a subsequence of the entries
  * @param from first entry
  * @param num total number of entries to serialize
+ * @param wo_num do not add num in the beginning
  */
-size_t MultiSerializer(const std::vector<LogEntry> &es, uint64_t from, uint32_t num, uint8_t *buf);
+size_t MultiSerializer(const std::vector<LogEntry> &es, uint64_t from, uint32_t num, uint8_t *buf, bool wo_num = false);
 
 /**
  * Process the buffer and build the map of sequence numbers to file offsets
