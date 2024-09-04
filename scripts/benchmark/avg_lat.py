@@ -33,10 +33,8 @@ def main():
     p99 = calculate_p(numbers, 99)
     p50 = calculate_p(numbers, 50)
     sorted_numbers, cdf = calculate_cdf(numbers)
-    print("Average:", average)
-    print("Standard Deviation:", std_dev)
-    print("p50:", p50)
-    print("p99:", p99)
+    print("Average (us), Standard Deviation (us), p50 (us), p99 (us)")
+    print(f'{average/1000:<12.3f}, {std_dev/1000:<23.3f}, {p50/1000:<8.3f}, {p99/1000:<8.3f}')
 
 if __name__ == "__main__":
     main()

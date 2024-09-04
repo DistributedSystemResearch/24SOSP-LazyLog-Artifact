@@ -1,8 +1,10 @@
 #!/bin/bash
 
-username="JiyuHu23"
-ssh_key="/users/$username/.ssh/dassl_rsa"
-ll_dir="/proj/rasl-PG0/$username/LazyLog-Artifact"
+set -x
+
+username="luoxh"
+ssh_key="/users/$username/.ssh/id_rsa_ae"
+ll_dir="/proj/rasl-PG0/LL-AE/LazyLog-Artifact"
 benchmark_dir="${ll_dir}/scripts/benchmark"
 cfg_dir="${benchmark_dir}/cfg"
 local_log_dir="${benchmark_dir}/logs"

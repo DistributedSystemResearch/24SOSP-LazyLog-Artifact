@@ -91,20 +91,40 @@ python3 analyze.py
 
 #### Append Latency (fig 6&7)
 To get latency for Erwin, run:
-```
+```bash
+# rebuild to work with Erwin
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmaek --build build -j
+
 cd scripts
+sudo rm -rf ../logs*
 ./fig67.sh
 python3 analyze.py
 ```
 To get latency for Scalog, run:
-```
+```bash
 cd scalog-benchmarking/lazylog-benchmarking/scripts
 sudo rm -rf ../results
 ./run_script_on_all.sh setup_disk.sh
 ./run.sh 0
 python3 analyze.py
 ```
+To get the latency for Corfu, run:
+```bash
+# rebuild to work with Corfu
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-DCORFU"
+cmaek --build build -j
 
+cd scripts/benchmark
+sudo rm -rf ./logs
+./run_single_shard.sh
+python3 avg_lat.py ./logs/corfu-single-shard/pc_produce.log  # get the latency for single shard
+
+./run_five_shard.sh
+python avg_lat.py logs/corfu-five-shard/pc_produce_node3.log logs/corfu-five-shard/pc_produce_node4.log  # get the latency for five shard
+```
+
+#### 
 
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms
