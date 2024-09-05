@@ -17,7 +17,7 @@ name: Corfu single shard
 topics: 1
 partitionsPerTopic: 1
 messageSize: 4096
-payloadFile: "/proj/rasl-PG0/JiyuHu23/lazylog/scripts/benchmark/payload/payload-4Kb.data"
+payloadFile: "/proj/rasl-PG0/LL-AE/LazyLog-Artifact/scripts/benchmark/payload/payload-4Kb.data"
 subscriptionsPerTopic: 1
 consumerPerSubscription: 1
 producersPerTopic: 2

@@ -5,14 +5,15 @@ set -x
 threeway="false"
 scalable_tput="false"
 size=4096
+cfg_dir="cfg"
 
-num_shards=(1 1 5 5)
-clients=(1 1 6 6)
-tputs=(30000 34000 150000 140000)
+num_shards=(1 5)
+clients=(1 6)
+tputs=(34000 140000)
 
 source $(dirname $0)/common.sh
 
-for i in {0..3}; do
+for i in {0..1}; do
     c=${clients[$i]}
     s=${num_shards[$i]}
     t=${tputs[$i]}

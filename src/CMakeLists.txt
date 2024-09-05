@@ -32,3 +32,9 @@ add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/cfg/rdma.prop
     COMMAND python ${CMAKE_SOURCE_DIR}/gen_rdma_config.py ${CMAKE_SOURCE_DIR}/cfg/rdma.prop
     DEPENDS ${CMAKE_SOURCE_DIR}/gen_rdma_config.py)
+add_custom_command(
+    TARGET gen_net_config
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/cfg/rdma.prop
+        ${CMAKE_SOURCE_DIR}/cfg_3_way/rdma.prop)

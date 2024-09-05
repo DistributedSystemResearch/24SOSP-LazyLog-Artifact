@@ -98,7 +98,8 @@ cmaek --build build -j
 
 cd scripts
 sudo rm -rf ../logs*
-./fig67.sh
+./fig6.sh
+./fig7.sh
 python3 analyze.py
 ```
 To get latency for Scalog, run:

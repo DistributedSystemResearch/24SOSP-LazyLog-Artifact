@@ -24,51 +24,51 @@ script_dir=$(dirname "$0")
 
 # arg: ip_addr of node, number of threads
 dur_cmd() {
-    echo "sudo GLOG_minloglevel=1 ./build/src/dur_log/dursvr -P cfg/durlog.prop -P cfg/rdma.prop -p dur_log.server_uri=$1:31850"
+    echo "sudo GLOG_minloglevel=1 ./build/src/dur_log/dursvr -P ${cfg_dir}/durlog.prop -P ${cfg_dir}/rdma.prop -p dur_log.server_uri=$1:31850"
 }
 
 cons_cmd() {
-    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/conssvr -P cfg/conslog.prop -P cfg/rdma.prop -P cfg/be.prop -P cfg/dl_client.prop"
+    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/conssvr -P ${cfg_dir}/conslog.prop -P ${cfg_dir}/rdma.prop -P ${cfg_dir}/be.prop -P ${cfg_dir}/dl_client.prop"
 }
 
 shard_cmd_primary() {
-    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/storage/shardsvr -P cfg/rdma.prop -P cfg/be.prop -P cfg/shard$1.prop -p leader=true"
+    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/storage/shardsvr -P ${cfg_dir}/rdma.prop -P ${cfg_dir}/be.prop -P ${cfg_dir}/shard$1.prop -p leader=true"
 }
 
 # arg: ip_addr of node
 shard_cmd_backup() {
-    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/storage/shardsvr -P cfg/rdma.prop -P cfg/be.prop -P cfg/shard$2.prop -p shard.server_uri=$1:31860"
+    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/storage/shardsvr -P ${cfg_dir}/rdma.prop -P ${cfg_dir}/be.prop -P ${cfg_dir}/shard$2.prop -p shard.server_uri=$1:31860"
 }
 
 # used when running two shard servers on the same ip. 
 # must use 31861 port
 # arg: ip_addr of node
 shard_cmd_backup_prime() {
-    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/storage/shardsvr -P cfg/rdma.prop -P cfg/be.prop -P cfg/shard$2.prop -p shard.server_uri=$1:31861"
+    echo "sudo GLOG_minloglevel=1 ./build/src/cons_log/storage/shardsvr -P ${cfg_dir}/rdma.prop -P ${cfg_dir}/be.prop -P ${cfg_dir}/shard$2.prop -p shard.server_uri=$1:31861"
 }
 
 # args: batch size, round
 basic_be_cmd() {
-    echo "sudo ./build/src/cons_log/storage/basic_be -P cfg/be.prop -P cfg/rdma.prop -p batch=$1 -p round=$2"
+    echo "sudo ./build/src/cons_log/storage/basic_be -P ${cfg_dir}/be.prop -P ${cfg_dir}/rdma.prop -p batch=$1 -p round=$2"
 }
 
 basic_be_read_cmd() {
-    echo "sudo ../build/src/cons_log/storage/basic_be_read -P ../cfg/be.prop -P ../cfg/rdma.prop -p batch=$2 -p round=$3 -p threadcount=$1"
+    echo "sudo ../build/src/cons_log/storage/basic_be_read -P ../${cfg_dir}/be.prop -P ../${cfg_dir}/rdma.prop -p batch=$2 -p round=$3 -p threadcount=$1"
 }
 
 # args: requests, runtime in secs, threads 
 read_cmd() {
-    echo "sudo ./build/src/client/benchmarking/read_bench -P cfg/rdma.prop -P cfg/dl_client.prop -P cfg/be.prop -p request_count=$1 -p runtime_secs=$2 -p threadcount=$3"
+    echo "sudo ./build/src/client/benchmarking/read_bench -P ${cfg_dir}/rdma.prop -P ${cfg_dir}/dl_client.prop -P ${cfg_dir}/be.prop -p request_count=$1 -p runtime_secs=$2 -p threadcount=$3"
 }
 
 # args: runtime in secs, threads 
 mixed_cmd() {
-    echo "sudo ../build/src/client/benchmarking/mixed_bench -P ../cfg/rdma.prop -P ../cfg/dl_client.prop -P ../cfg/be.prop -p runtime_secs=$1 -p threadcount=$2"
+    echo "sudo ../build/src/client/benchmarking/mixed_bench -P ../${cfg_dir}/rdma.prop -P ../${cfg_dir}/dl_client.prop -P ../${cfg_dir}/be.prop -p runtime_secs=$1 -p threadcount=$2"
 }
 
 # args: runtime in secs, number of threads, request size
 append_cmd() {
-    echo "sudo GLOG_minloglevel=1 ./build/src/client/benchmarking/append_bench -P cfg/be.prop -P cfg/dl_client.prop -P cfg/rdma.prop -p runtime_secs=$1 -p threadcount=$2 -p request_size_bytes=$3 -p limit.ops=$4"
+    echo "sudo GLOG_minloglevel=1 ./build/src/client/benchmarking/append_bench -P ${cfg_dir}/be.prop -P ${cfg_dir}/dl_client.prop -P ${cfg_dir}/rdma.prop -p runtime_secs=$1 -p threadcount=$2 -p request_size_bytes=$3 -p limit.ops=$4"
 }
 
 dur_svrs_ip=()
@@ -139,7 +139,7 @@ run_read_bench() {
 
 # args: num shards
 change_num_shards() {
-    sed -i "s/shard\.num=.*/shard.num=${1}/g" $ll_dir/cfg/be.prop
+    sed -i "s/shard\.num=.*/shard.num=${1}/g" $ll_dir/${cfg_dir}/be.prop
 }
 
 # args: runtime in secs, number of threads, request size

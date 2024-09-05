@@ -59,7 +59,7 @@ void LazyLogClient::Initialize(const Properties &p) {
 }
 
 void LazyLogClient::Finalize() {
-    // be_rd_cli_->FinalizeBackend();
+    be_rd_cli_->FinalizeBackend();
 
     for (auto dc : dur_clis_) {
         dc.second->Finalize();
@@ -170,9 +170,7 @@ int LazyLogClient::SpecReadEntry(const uint64_t idx, std::string &data) {
     return ret_v;
 }
 
-void LazyLogClient::doProgress() {
-    ERPCTransport::RunERPCOnce();
-}
+void LazyLogClient::doProgress() { ERPCTransport::RunERPCOnce(); }
 
 std::tuple<uint64_t, uint64_t, uint16_t> LazyLogClient::GetTail() { return dur_clis_[dl_primary_]->GetNumDurEntry(); }
 
