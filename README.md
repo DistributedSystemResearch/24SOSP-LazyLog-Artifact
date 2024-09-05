@@ -93,7 +93,7 @@ python3 analyze.py
 To get latency for Erwin, run:
 ```bash
 # rebuild to work with Erwin
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
 cmaek --build build -j
 
 cd scripts
@@ -112,7 +112,7 @@ python3 analyze.py
 To get the latency for Corfu, run:
 ```bash
 # rebuild to work with Corfu
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-DCORFU"
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=ON
 cmaek --build build -j
 
 cd scripts/benchmark
@@ -124,7 +124,11 @@ python3 avg_lat.py ./logs/corfu-single-shard/pc_produce.log  # get the latency f
 python avg_lat.py logs/corfu-five-shard/pc_produce_node3.log logs/corfu-five-shard/pc_produce_node4.log  # get the latency for five shard
 ```
 
-#### 
+#### Read Latency (fig 8&9)
+
+
+#### Append Throughput (fig 12)
+
 
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms
