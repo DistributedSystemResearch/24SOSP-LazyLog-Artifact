@@ -351,8 +351,8 @@ elif [ "$mode" -eq 3 ]; then # run a single shard
     # run_cons_svr
 else
     kill_shard_svrs
-    # kill_cons_svr
+    kill_cons_svr
     kill_dur_svrs
-    # kill_clients
+    kill_clients
     collect_logs
 fi

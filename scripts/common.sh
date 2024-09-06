@@ -95,7 +95,7 @@ run_dur_svrs() {
 }
 
 run_cons_svr() {
-    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sh -c \"cd $ll_dir && nohup $(cons_cmd) > $log_dir/conssvr_$svr.log 2>&1 &\""
+    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sh -c \"cd $ll_dir && nohup $(cons_cmd) > $log_dir/conssvr_$cons_svr.log 2>&1 &\""
 }
 
 # args: num shards
@@ -142,6 +142,11 @@ change_num_shards() {
     sed -i "s/shard\.num=.*/shard.num=${1}/g" $ll_dir/${cfg_dir}/be.prop
 }
 
+# args: stripe_unit
+change_stripe_unit() {
+    sed -i "s/shard\.stripe_unit_size=[0-9]*/shard.stripe_unit_size=${1}/g" $ll_dir/cfg/be.prop
+}
+
 # args: runtime in secs, number of threads, request size
 run_append_bench() {
     local num_client_nodes=${#client_nodes[@]}
@@ -183,7 +188,10 @@ kill_dur_svrs() {
 }
 
 kill_cons_svr() {
-    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "pid=\$(sudo lsof -i :31852 | awk 'NR==2 {print \$2}') ; sudo kill -2 \$pid 2> /dev/null || true" 
+    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sudo kill -2 \$(sudo lsof -t -i:31852)"
+    sleep 3
+    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sudo bash -s conssvr" < $script_dir/kill_process.sh &
+    wait 
 }
 
 kill_clients() {

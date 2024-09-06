@@ -68,8 +68,6 @@ void ERPCConsLogTransport::Finalize() {
     }
     fetch_th_.join();
 
-    fetch_th_.join();
-
     cons_log_->Finalize();
 
     if (nexus_) delete nexus_;

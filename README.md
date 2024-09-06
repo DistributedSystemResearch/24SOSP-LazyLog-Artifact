@@ -129,7 +129,13 @@ python avg_lat.py logs/corfu-five-shard/pc_produce_node3.log logs/corfu-five-sha
 
 
 #### Append Throughput (fig 12)
-
+To get the throughput for Erwin, run:
+```bash
+cd scripts
+sudo rm -rf ../logs*
+./fig12.sh
+python3 analyze.py
+```
 
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms
