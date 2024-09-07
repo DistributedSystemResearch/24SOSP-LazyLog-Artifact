@@ -138,10 +138,14 @@ sudo rm -rf ./logs
 # run with corfu (6 mins)
 ./run_lag_corfu.sh
 
+# rebuild to work with Erwin
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
+cmake --build build -j
+
 # run with erwin (6 mins)
 ./run_lag_erwin.sh
 
-# analyze and print results
+# analyze and print all results
 python3 analyze_fig_8_9.py
 ```  
 
