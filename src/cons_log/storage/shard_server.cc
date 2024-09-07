@@ -29,7 +29,6 @@ int ShardServer::entry_fd_ = -1;
 std::unordered_map<uint64_t, std::atomic<int>> ShardServer::cache_size_atomic_;
 #endif
 
-
 void svr_sm_handler(int, erpc::SmEventType, erpc::SmErrType, void *) {}
 
 ShardServer::ShardServer() : is_primary_(false) {}
@@ -52,17 +51,14 @@ void ShardServer::backgroundFsync() {
     uint64_t last_synced_base_idx = 0;
     uint64_t big_stripe_unit_size = stripe_unit_size_ * shard_num_;
 
-    while (!terminate_) {
+    while (run_) {
+        int latest_fd;
         {
             std::unique_lock<std::shared_mutex> lock(cache_rw_lock_);
-            latest_base_idx = replicated_index_ / big_stripe_unit_size * big_stripe_unit_size;
+            if (entries_fd_set_.empty()) continue;
+            latest_fd = entries_fd_set_.rbegin()->second;
         }
-        std::string data_file_path = getDataFilePath(latest_base_idx);
-        int fd = ::open(data_file_path.c_str(), O_WRONLY | O_APPEND);
-        if (fd != -1) {
-            ::fsync(fd);
-            ::close(fd);
-        }
+        fsync(latest_fd);
         usleep(1000);
     }
 }
@@ -295,7 +291,6 @@ void ShardServer::ReadEntryHandler(erpc::ReqHandle *req_handle, void *context) {
             read_lock.unlock();
         }
     }
-
 
     LogEntry e;
     len = Deserializer(e, resp.buf_);
@@ -552,7 +547,6 @@ void ShardServer::addToEntryCacheAsync(uint64_t base_idx, const uint8_t *buf) {
     LogEntry e;
     size_t entry_len = Deserializer(e, buf);
     uint64_t local_idx = (e.log_idx - base_idx) / shard_num_;
-
 
     if (len = pwrite(fd, buf, entry_len, entry_len * local_idx) != entry_len) {
         LOG(WARNING) << "Writing less bytes than expected " << len;

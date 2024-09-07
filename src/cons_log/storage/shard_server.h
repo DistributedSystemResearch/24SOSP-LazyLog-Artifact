@@ -48,9 +48,9 @@ class ShardServer : public ERPCTransport {
     static void backgroundFsync();
 
 #ifdef CORFU
-    static void ReadBatchHandler(erpc::ReqHandle *req_handle, void *context);   // called from client
+    static void ReadBatchHandler(erpc::ReqHandle *req_handle, void *context);  // called from client
     static size_t collectBatchEntries(const uint64_t start_idx, const uint64_t end_idx, uint8_t *buf);
-    static void AppendEntryHandler(erpc::ReqHandle *req_handle, void *context); // called from client
+    static void AppendEntryHandler(erpc::ReqHandle *req_handle, void *context);  // called from client
     static void addToEntryCacheAsync(uint64_t base_idx, const uint8_t *buf);
 #endif
 

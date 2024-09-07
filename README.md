@@ -94,7 +94,7 @@ To get latency for Erwin, run:
 ```bash
 # rebuild to work with Erwin
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
-cmaek --build build -j
+cmake --build build -j
 
 cd scripts
 sudo rm -rf ../logs*
@@ -114,7 +114,7 @@ To get the latency for Corfu, run:
 ```bash
 # rebuild to work with Corfu
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=ON
-cmaek --build build -j
+cmake --build build -j
 
 cd scripts/benchmark
 sudo rm -rf ./logs
@@ -126,7 +126,24 @@ python avg_lat.py logs/corfu-five-shard/pc_produce_node3.log logs/corfu-five-sha
 ```
 
 #### Read Latency (fig 8&9)
+Run the scripts for corfu and erwin. Each step runs for 6 different parameters (rate: 15K, 30K, 45K)x(delay: 0ms, 3ms) with 2 minutes per config. Consequently, the total runtime for corfu and erwin is about 24 mins
+```bash
+# rebuild to work with Corfu
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=ON
+cmake --build build -j
 
+cd scripts/benchmark
+sudo rm -rf ./logs
+
+# run with corfu (6 mins)
+./run_lag_corfu.sh
+
+# run with erwin (6 mins)
+./run_lag_erwin.sh
+
+# analyze and print results
+python3 analyze_fig_8_9.py
+```  
 
 #### Append Throughput (fig 12)
 To get the throughput for Erwin, run:

@@ -42,7 +42,7 @@ target_sources(benchmark PRIVATE
 
 target_link_libraries(benchmark 
   PRIVATE yaml-cpp::yaml-cpp
-
+  PRIVATE hdr_histogram
   PRIVATE lazylogcli
   PRIVATE backendcli
 )
