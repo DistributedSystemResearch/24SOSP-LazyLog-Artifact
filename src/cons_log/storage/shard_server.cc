@@ -7,11 +7,7 @@ namespace lazylog {
 
 std::unordered_map<std::string, std::shared_ptr<ShardClient>> ShardServer::backups_;
 std::unordered_map<uint64_t, std::vector<LogEntry>> ShardServer::entries_cache_set_;
-#ifdef CORFU
 std::map<uint64_t, int> ShardServer::entries_fd_set_;
-#else
-std::unordered_map<uint64_t, int> ShardServer::entries_fd_set_;
-#endif
 std::unordered_map<uint64_t, size_t> ShardServer::cache_size_;
 std::shared_mutex ShardServer::cache_rw_lock_;
 std::condition_variable_any ShardServer::cache_write_cv_;

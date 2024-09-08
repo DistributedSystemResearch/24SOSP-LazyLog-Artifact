@@ -139,10 +139,12 @@ sudo rm -rf ./logs
 ./run_lag_corfu.sh
 
 # rebuild to work with Erwin
+cd ../..
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
 cmake --build build -j
 
 # run with erwin (6 mins)
+cd scripts/benchmark
 ./run_lag_erwin.sh
 
 # analyze and print all results

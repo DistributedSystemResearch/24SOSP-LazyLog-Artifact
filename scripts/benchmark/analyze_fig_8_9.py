@@ -21,10 +21,16 @@ def print_table(directory):
 
 print("********************************")
 print("corfu")
-print_table('./logs/corfu-lag')
+try:
+    print_table('./logs/corfu-lag')
+except:
+    pass
 print("********************************")
 print("erwin")
-print_table('./logs/erwin-lag')
+try:
+    print_table('./logs/erwin-lag')
+except:
+    pass
 print("********************************")
 
 

@@ -61,11 +61,7 @@ class ShardServer : public ERPCTransport {
    protected:
     static std::unordered_map<std::string, std::shared_ptr<ShardClient>> backups_;
     static std::unordered_map<uint64_t, std::vector<LogEntry>> entries_cache_set_;
-#ifdef CORFU
     static std::map<uint64_t, int> entries_fd_set_;
-#else
-    static std::unordered_map<uint64_t, int> entries_fd_set_;
-#endif
     static std::unordered_map<uint64_t, size_t> cache_size_;
     static size_t stripe_unit_size_;
     static int shard_num_;
