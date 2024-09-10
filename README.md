@@ -47,22 +47,22 @@ cmake --build build -j
 ### Node list
 | node   | address                |
 |--------|------------------------|
-| node0  | hp133.utah.cloudlab.us |
-| node1  | hp151.utah.cloudlab.us |
-| node2  | hp143.utah.cloudlab.us |
-| node3  | hp140.utah.cloudlab.us |
-| node4  | hp136.utah.cloudlab.us |
-| node5  | hp123.utah.cloudlab.us |
-| node6  | hp125.utah.cloudlab.us |
-| node7  | hp142.utah.cloudlab.us |
-| node8  | hp134.utah.cloudlab.us |
-| node9  | hp157.utah.cloudlab.us |
-| node10 | hp138.utah.cloudlab.us |
-| node11 | hp154.utah.cloudlab.us |
-| node12 | hp132.utah.cloudlab.us |
-| node13 | hp155.utah.cloudlab.us |
-| node14 | hp127.utah.cloudlab.us |
-| node15 | hp158.utah.cloudlab.us |
+| node0  | hp027.utah.cloudlab.us |
+| node1  | hp035.utah.cloudlab.us |
+| node2  | hp086.utah.cloudlab.us |
+| node3  | hp087.utah.cloudlab.us |
+| node4  | hp111.utah.cloudlab.us |
+| node5  | hp117.utah.cloudlab.us |
+| node6  | hp120.utah.cloudlab.us |
+| node7  | hp028.utah.cloudlab.us |
+| node8  | hp088.utah.cloudlab.us |
+| node9  | hp106.utah.cloudlab.us |
+| node10 | hp108.utah.cloudlab.us |
+| node11 | hp109.utah.cloudlab.us |
+| node12 | hp107.utah.cloudlab.us |
+| node13 | hp081.utah.cloudlab.us |
+| node14 | hp119.utah.cloudlab.us |
+| node15 | hp012.utah.cloudlab.us |
 
 ### Steps for Functional
 * Login into `node0` in the cluster we provide (unless otherwise stated, all experiment scripts are run from node0). The eRPC and LazyLog directories will be in the shared NFS folder at `/proj/rasl-PG0/LL-AE`. 
@@ -187,7 +187,7 @@ sudo rm -rf ../logs*  # analyze the previous results before removing them
 python3 analyze.py
 ```
 
-PS: We only run 4KB append here, because running 8KB append requires 4 client nodes. We only have 16 machines and can use at most 2 machines for client nodes (in the case of 5 shards).
+PS: We only run 4KB append here, because running 8KB append requires 4 client nodes for the throughput to be scalable otherwise it will be bottlenecked by the client. We only have 16 machines and can use at most 2 machines for client nodes (in the case of 5 shards).
 
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms
