@@ -160,6 +160,35 @@ sudo rm -rf ../logs*
 python3 analyze.py
 ```
 
+#### Scalable Throughput (fig 13)
+To get the throughput for Erwin on 1, 3, and 5 shards, run:
+```bash
+# build the regular version of Erwin
+git checkout main
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
+cmake --build build -j
+
+cs scripts
+sudo rm -rf ../logs*
+./fig13.sh
+python3 analyze.py
+```
+
+To get the throughput for Erwin-st on 1, 3, and 5 shards, run
+```bash
+# build the scalable-tput (st) version of Erwin
+git checkout scalable-tput
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
+cmake --build build -j
+
+cd scripts
+sudo rm -rf ../logs*  # analyze the previous results before removing them
+./fig13_st.sh
+python3 analyze.py
+```
+
+PS: We only run 4KB append here, because running 8KB append requires 4 client nodes. We only have 16 machines and can use at most 2 machines for client nodes (in the case of 5 shards).
+
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms
 * OS: Ubuntu 22.04 LTS

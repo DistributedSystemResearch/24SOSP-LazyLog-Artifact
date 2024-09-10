@@ -3,7 +3,7 @@ import glob
 
 base_dir = "../"
 
-print("#clients, avg tput(ops/sec), avg latency(us/op), p99(us/op), p99.9(us/op)")
+print("#clients, avg tput(ops/sec), avg latency(us/op), p99(us/op), p99.9(us/op), dir")
 for dir_name in os.listdir(base_dir):
     if dir_name.startswith("logs") and os.path.isdir(os.path.join(base_dir, dir_name)):
         clients=None
@@ -31,4 +31,4 @@ for dir_name in os.listdir(base_dir):
                         p99 += float(line.split()[1]) / 1000
                     if "p99.9" in line:
                         p999 += float(line.split()[1]) / 1000
-        print(f"{clients:<8}, {avg_tput:<17}, {avg_latency/num_files:<18}, {p99/num_files:<10}, {p999/num_files:<12}")
+        print(f"{clients:<8}, {avg_tput:<17.3f}, {avg_latency/num_files:<18.3f}, {p99/num_files:<10.3f}, {p999/num_files:<12.3f}, {dir_name}")
