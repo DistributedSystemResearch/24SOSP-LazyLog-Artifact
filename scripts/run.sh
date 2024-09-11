@@ -4,6 +4,7 @@ set -x
 
 threeway="false"
 scalable_tput="false"
+cfg_dir="cfg"
 
 source $(dirname $0)/common.sh
 
@@ -70,17 +71,19 @@ elif [ "$mode" -eq 2 ]; then
 
                 setup_data
                 change_num_shards $shard
+                change_stripe_unit 1000
                 run_shard_svr $shard
                 run_dur_svrs
                 run_cons_svr
 
-                run_append_bench 120 $c $size
+                run_append_bench 120 $c $size 0
                 kill_cons_svr
                 kill_shard_svrs
                 kill_dur_svrs
                 collect_logs
                 mkdir -p ${ll_dir}/logs_${c}_${size}_${shard}
                 mv $ll_dir/logs/* ${ll_dir}/logs_${c}_${size}_${shard}
+                rm -rf $ll_dir/logs
             done 
         done
     done 

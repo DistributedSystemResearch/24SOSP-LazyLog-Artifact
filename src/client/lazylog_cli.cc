@@ -45,9 +45,11 @@ void LazyLogClient::Initialize(const Properties &p) {
     be_rd_cli_->InitializeBackend(p);
 
 #ifdef CORFU
+    LOG(INFO) << "Connecting to backup shard...";
     be_rd_cli_backup_ = std::make_shared<NaiveReadBackend>(global_th_id_.fetch_add(1) % thread_count);
     be_rd_cli_backup_->InitializeBackendBackup(p);
 
+    LOG(INFO) << "Connecting to 2nd backup shard...";
     be_rd_cli_backup_2_ = std::make_shared<NaiveReadBackend>(global_th_id_.fetch_add(1) % thread_count);
     be_rd_cli_backup_2_->InitializeBackendBackup(p, 2);
 #endif

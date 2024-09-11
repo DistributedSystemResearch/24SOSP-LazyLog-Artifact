@@ -39,7 +39,7 @@ make -j
 ```
 cd /sharedfs
 git clone https://github.com/dassl-uiuc/LazyLog-Artifact.git --recursive
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
 cmake --build build -j
 ```
 ## Running a simple append-only benchmark on the provided cluster
@@ -69,7 +69,7 @@ cmake --build build -j
   ```
   ssh -o StrictHostKeyChecking=no -i ${PATH_TO_KEY} luoxh@${HOST_ADDR_NODE0}
   ```
-* Modify your username and passless private key path in `scripts/run.sh`. 
+* Modify your username and passless private key path in `scripts/run.sh`. (already done)
 * Run the following 
 ```
 # Create a logs directory
@@ -168,9 +168,16 @@ git checkout main
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
 cmake --build build -j
 
-cs scripts
+cd scripts
 sudo rm -rf ../logs*
 ./fig13.sh
+python3 analyze.py
+```
+To get the latency vs. throughput for Erwin, run:
+```bash
+cd scripts
+sudo rm -rf ../logs*  # analyze the previous results before removing them
+./fig13b.sh
 python3 analyze.py
 ```
 
@@ -184,6 +191,13 @@ cmake --build build -j
 cd scripts
 sudo rm -rf ../logs*  # analyze the previous results before removing them
 ./fig13_st.sh
+python3 analyze.py
+```
+To get the latency vs. throughput for Erwin-st, run:
+```bash
+cd scripts
+sudo rm -rf ../logs*  # analyze the previous results before removing them
+./fig13b_st.sh
 python3 analyze.py
 ```
 
