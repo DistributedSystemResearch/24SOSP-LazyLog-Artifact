@@ -139,16 +139,16 @@ collect_logs() {
 run_shard_svr() {
     for ((i=0; i<$1; i++)); 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@${shard_bac[$i]} "sh -c \"cd $ll_dir && nohup $(shard_cmd_backup $(get_ip ${shard_bac[$i]}) $i) > $log_dir/shardsvr_backup_$i_${shard_bac[$i]}.log 2>&1 &\""
+        ssh -o StrictHostKeyChecking=no -i $pe $username@${shard_bac[$i]} "sh -c \"cd $ll_dir && nohup $(shard_cmd_backup $(get_ip ${shard_bac[$i]}) $i) > $log_dir/shardsvr_backup_$i_${shard_bac[$i]}.log 2>&1 &\""
     done 
     for ((i=0; i<$1; i++)); 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@${shard_bac1[$i]} "sh -c \"cd $ll_dir && nohup $(shard_cmd_backup_prime $(get_ip ${shard_bac1[$i]}) $i) > $log_dir/shardsvr_backup1_$i_${shard_bac1[$i]}.log 2>&1 &\""
+        ssh -o StrictHostKeyChecking=no -i $pe $username@${shard_bac1[$i]} "sh -c \"cd $ll_dir && nohup $(shard_cmd_backup_prime $(get_ip ${shard_bac1[$i]}) $i) > $log_dir/shardsvr_backup1_$i_${shard_bac1[$i]}.log 2>&1 &\""
     done 
     sleep 2
     for ((i=0; i<$1; i++)); 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@${shard_pri[$i]} "sh -c \"cd $ll_dir && nohup $(shard_cmd_primary $i) > $log_dir/shardsvr_pri_$i_${shard_pri[$i]}.log 2>&1 &\""
+        ssh -o StrictHostKeyChecking=no -i $pe $username@${shard_pri[$i]} "sh -c \"cd $ll_dir && nohup $(shard_cmd_primary $i) > $log_dir/shardsvr_pri_$i_${shard_pri[$i]}.log 2>&1 &\""
     done 
     sleep 2
 }
@@ -158,9 +158,9 @@ run_dur_svrs() {
     for svr in "${dur_svrs[@]}"; 
     do 
         if ${primary_done}; then 
-            ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sh -c \"cd $ll_dir && nohup $(dur_cmd $(get_ip $svr)) > $log_dir/dursvr_$svr.log 2>&1 &\""
+            ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sh -c \"cd $ll_dir && nohup $(dur_cmd $(get_ip $svr)) > $log_dir/dursvr_$svr.log 2>&1 &\""
         else 
-            ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sh -c \"cd $ll_dir && nohup $(dur_cmd $(get_ip $svr)) -p leader=true > $log_dir/dursvr_$svr.log 2>&1 &\""
+            ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sh -c \"cd $ll_dir && nohup $(dur_cmd $(get_ip $svr)) -p leader=true > $log_dir/dursvr_$svr.log 2>&1 &\""
             primary_done=true
         fi 
     done 
@@ -169,50 +169,50 @@ run_dur_svrs() {
 clear_nodes() {
     for svr in "${shard_pri[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sudo rm -rf $data_dir/*" &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo rm -rf $data_dir/*" &
     done 
     for svr in "${shard_bac[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sudo rm -rf $data_dir/*" &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo rm -rf $data_dir/*" &
     done 
     for svr in "${shard_bac1[@]}";
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sudo rm -rf $data_dir/*" &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo rm -rf $data_dir/*" &
     done
-    ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$cons_svr "sudo rm -rf $data_dir/*" &
+    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sudo rm -rf $data_dir/*" &
     for svr in "${dur_svrs[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sudo rm -rf $data_dir/*" &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo rm -rf $data_dir/*" &
     done 
     for client in "${client_nodes[@]}"; 
     do 
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$client "sudo rm -rf $data_dir/*" &
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "sudo rm -rf $data_dir/*" &
     done
     wait
 }
 
 run_cons_svr() {
-    ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$cons_svr "sh -c \"cd $ll_dir && nohup $(cons_cmd) > $log_dir/conssvr_$svr.log 2>&1 &\""
+    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sh -c \"cd $ll_dir && nohup $(cons_cmd) > $log_dir/conssvr_$svr.log 2>&1 &\""
 }
 
 setup_data() {
     clear_nodes
     for svr in "${shard_pri[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
     for svr in "${shard_bac[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
-    ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$cons_svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
+    ssh -o StrictHostKeyChecking=no -i $pe $username@$cons_svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     for svr in "${dur_svrs[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$svr "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
     for client in "${client_nodes[@]}"; 
     do
-        ssh -o StrictHostKeyChecking=no -i ${ssh_key} $username@$client "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
+        ssh -o StrictHostKeyChecking=no -i $pe $username@$client "sudo chown -R $username:$usergroup $data_dir; mkdir $log_dir"
     done 
 }
 
