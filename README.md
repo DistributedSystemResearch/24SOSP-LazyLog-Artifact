@@ -69,7 +69,7 @@ cmake --build build -j
   ```
   ssh -o StrictHostKeyChecking=no -i ${PATH_TO_KEY} luoxh@${HOST_ADDR_NODE0}
   ```
-* Modify your username and passless private key path in `scripts/run.sh`. (already done)
+* Modify your username and passless private key path in `scripts/usr_cfg.sh`. (already done)
 * Run the following 
 ```
 # Create a logs directory
@@ -96,6 +96,8 @@ To get latency for Erwin, run:
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=OFF
 cmake --build build -j
 
+cp ./cfg/rdma.prop ./cfg_3_way/
+
 cd scripts
 sudo rm -rf ../logs*
 ./fig6.sh
@@ -115,6 +117,9 @@ To get the latency for Corfu, run:
 # rebuild to work with Corfu
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCORFU=ON
 cmake --build build -j
+
+# copy the rdma config
+cp ./cfg/rdma.prop ./scripts/benchmark/cfg/
 
 cd scripts/benchmark
 sudo rm -rf ./logs

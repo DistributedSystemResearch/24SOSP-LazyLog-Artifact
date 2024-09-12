@@ -7,10 +7,10 @@ shard_1=("node6" "node7" "node8") # primary last
 shard_2=("node10" "node11" "node9") # primary last
 shard_3=("node9" "node10" "node11") # primary last
 shard_4=("node13" "node14" "node12") # primary last
-username="luoxh"
 
-pe="/users/$username/.ssh/id_rsa_ae"
-data_dir="/data"
+source $(dirname $0)/../usr_cfg.sh
+ll_dir=$(realpath $(dirname $0)/../..)
+
 log_dir="$data_dir/logs"
 ll_dir="/proj/rasl-PG0/LL-AE/LazyLog-Artifact"
 cfg_dir="${ll_dir}/scripts/benchmark/cfg"

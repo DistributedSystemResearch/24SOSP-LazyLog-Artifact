@@ -13,14 +13,12 @@ else
     shard_bac=("node6" "node8" "node10" "node12" "node14")
 fi
 client_nodes=("node0")
-username="luoxh"
-usergroup="rasl-PG0"
 
-pe="/users/$username/.ssh/id_rsa_ae"
-data_dir="/data"
+source $(dirname $0)/usr_cfg.sh
+
 log_dir="$data_dir/logs"
-ll_dir="/proj/rasl-PG0/LL-AE/LazyLog-Artifact"
-script_dir=$(dirname "$0")
+ll_dir=$(realpath $(dirname $0)/..)
+script_dir=${ll_dir}/scripts
 
 # arg: ip_addr of node, number of threads
 dur_cmd() {
