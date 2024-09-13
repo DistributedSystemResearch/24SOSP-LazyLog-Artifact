@@ -223,6 +223,80 @@ python3 analyze.py
 
 PS: We only run 4KB append here, because running 8KB append requires 4 client nodes for the throughput to be scalable otherwise it will be bottlenecked by the client. We only have 16 machines and can use at most 2 machines for client nodes (in the case of 5 shards).
 
+### Organization and Implementation Notes
+
+At a high-level, the source directory for this artifact is organized as follows
+#### Erwin-bb (main branch)
+```
+LazyLog-Artifact
+|- RDMA/ (a C++ RDMA library)
+|- cfg*/ (configuration files)
+|- src/ (source code for Erwin-bb)
+|   |- client/ (client code)
+|   |   |- benchmarking/ (benchmarking clients e.g. append client)
+|   |   |- lazylog_cli.h (client header)
+|   |   |- lazylog_cli.cc (client implementation)
+|   |   |- basic_client.cc (simple client to illustrate the basic API)
+|   |- dur_log/ (sequencing layer implementation)
+|   |   |- dur_svr.cc (sequencing layer server)
+|   |   ...
+|   |- cons_log/ 
+|   |   |- storage/ (shard server implementation)
+|   |   |   |- shard_svr.cc (shard server)
+|   |   |   ...
+|   |   |- cons_svr.cc (component that bridges sequencing layer interaction with the shard server)
+|   |   ...
+|   |- rpc/ (wrappers around eRPC)
+|   |- utils/ (utilities)
+|   |- benchmark/ (wrappers around LazyLog-API for append-read mixed experiments)
+...
+```
+#### Erwin-st (scalable-tput branch)
+```
+LazyLog-Artifact
+|- RDMA/ (a C++ RDMA library)
+|- cfg*/ (configuration files)
+|- src/ (source code for Erwin-st)
+|   |- client/ (client code)
+|   |   |- benchmarking/ (benchmarking clients e.g. append client)
+|   |   |- lazylog_scalable_cli.h (client header)
+|   |   |- lazylog_scalable_cli.cc (client implementation)
+|   |   |- basic_client.cc (simple client to illustrate the basic API)
+|   |   ...
+|   |- dur_log/ (sequencing layer implementation)
+|   |   |- dur_svr.cc (sequencing layer server, handles metadata only)
+|   |   ...
+|   |- cons_log/ 
+|   |   |- storage/ (shard server implementation)
+|   |   |   |- datalog/ 
+|   |   |   |   |- datalog_svr.cc (shard data server, handles data writes)
+|   |   |   |   ...
+|   |   |   ...
+|   |   |- cons_svr.cc (component that bridges sequencing layer interaction with the shard data server)
+|   |   ...
+|   |- rpc/ (wrappers around eRPC)
+|   |- utils/ (utilities)
+...
+```
+The sequencing layer server is in the `src/dur_log` subdirectory with the main entry point at `src/dur_log/dur_svr.cc`. The `src/cons_log` subdirectory implements the shard server and bridge between the sequencing layer and the shard servers. The `src/cons_log/storage` subdirectory (`src/cons_log/storage/datalog` for erwin-st) contains the implementation of the shard servers with the main entry point at `src/cons_log/storage/shard_svr.cc` (`src/cons_log/storage/datalog/datalog_svr.cc` for erwin-st). 
+
+The sequencing layer is implemented as a ring-buffer in memory. `src/cons_log/cons_svr.cc` implements the logical portion on the sequencing layer primary that periodically orders records/metadata from the sequencing layer and pushes records/metadata to the shard servers. In our experiments, we run this component on a separate machine from the actual sequencing layer primary and perform RDMA reads and writes to interact with the sequencing layer primary nodes' ring-buffer (to periodically read and unordered records/metadata and flush them to the shard servers; and to garbage collect records and update the `last-ordered-gp` (from the paper)). The `cons_svr` uses RPCs to garbage collect records and update `last-ordered-gp` on the backups. 
+
+Here we list some of the important pieces of the erwin/erwin-st architecture as described in the paper and link it to the actual implementation. 
+1) In our code, the `last-ordered-gp` on each sequencing layer node is represented by the [`ordered_watermk_`](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/dur_log/dur_log_flat.cc#L51) variable. 
+2) After ordering and writing a batch of records on the shard servers, the records are garbage collected and `last-ordered-gp` is updated [here](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/cons_log/cons_log.cc#L150-L151). 
+3) `stable-gp` is updated on the shard servers [here](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/cons_log/cons_log.cc#L162)
+
+
+### How to write your own Erwin-st/Erwin-bb client application? 
+One can follow the client API in `src/client/lazylog_cli.h` (in `src/client/lazylog_scalable_cli.h` for erwin-st) for all the available RPC calls. An example client is provided in `src/client/basic_client.cc`, for a more advanced example, refer to `src/client/benchmarking/append_bench.cc`. To link erwin-bb/erwin-st with your own application and use the client API,
+1) Build the source code (see above). 
+2) Include the client header file. 
+3) Link lazylogcli (created at `build/src/liblazylogcli.a`) and backendcli (created at `build/src/cons_log/storage/liblazylogcli.a`).
+
+
+One must ensure that each `LazyLogClient` is created in a separate thread. For best load balancing of client connections across all server eRPC threads, you can set a unique `dur_log.client_id` property for each client before calling `Initialize` as shown [here](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/client/benchmarking/append_bench.cc#L32-L36). 
+
 ## Supported Platforms
 The two lazylog systems Erwin-blackbox and Erwin-st have been tested on the following platforms
 * OS: Ubuntu 22.04 LTS
