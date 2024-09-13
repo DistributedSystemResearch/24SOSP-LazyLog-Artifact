@@ -104,9 +104,24 @@ sudo rm -rf ../logs*
 ./fig7.sh
 python3 analyze.py
 ```
-To get latency for Scalog, run:
+To get latency for Scalog, first build scalog:
 ```bash
+# install go on all nodes (if you haven't done so)
 cd scalog-benchmarking/lazylog-benchmarking/scripts
+./run_script_on_all.sh install_go.sh
+source ~/.bashrc
+
+# build scalog
+sudo chown -R $(whoami) ~/go
+sudo rm -rf ~/.cache
+cd ../..  # now in `scalog-benchmark` dir
+go build
+# You should see `scalog` executable in scalog-benchmarking dir
+```
+
+Then run:
+```bash
+cd lazylog-benchmarking/scripts
 sudo rm -rf ../results
 ./run_script_on_all.sh setup_disk.sh
 ./run.sh 0
