@@ -284,7 +284,7 @@ The sequencing layer is implemented as a ring-buffer in memory. `src/cons_log/co
 
 Here we list some of the important pieces of the erwin/erwin-st architecture as described in the paper and link it to the actual implementation. 
 1) In our code, the `last-ordered-gp` on each sequencing layer node is represented by the [`ordered_watermk_`](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/dur_log/dur_log_flat.cc#L51) variable. 
-2) After ordering and writing a batch of records on the shard servers, the records are garbage collected and `last-ordered-gp` is updated [here](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/cons_log/cons_log.cc#L150-L151). 
+2) After ordering and writing a batch of records on the shard servers, the records are garbage collected and `last-ordered-gp` is updated on all the sequencing replicas [here](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/cons_log/cons_log.cc#L150-L151). 
 3) `stable-gp` is updated on the shard servers [here](https://github.com/dassl-uiuc/LazyLog-Artifact/blob/ab1fffb792700e891d3c66e293d44706383def79/src/cons_log/cons_log.cc#L162)
 
 
